@@ -1,0 +1,20 @@
+CREATE TABLE
+    ALUNO (
+    ra int,
+    nome varchar(60) constraint nn_nome not null,
+    cpf number(11),
+    dt_nasc date,
+    cep_fk int,
+    FOREIGN KEY (cep_fk) references ENDERECO(cep),
+    constraint uk_cpf unique(cpf),
+    constraint pk_ra primary key(ra)
+    );
+
+CREATE TABLE ENDERECO(
+    cep int PRIMARY KEY,
+    rua varchar(100),
+    cidade varchar(100),
+    uf char(2)
+    );
+    
+drop table ALUNO
