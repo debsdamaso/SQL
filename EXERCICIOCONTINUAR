@@ -1,0 +1,50 @@
+CREATE TABLE
+    T_UNV_ALUNO (
+    id_aluno int constraint pk_aluno primary key,
+    nm_aluno varchar(100) constraint nm_aluno not null,
+    dt_nascimento date,
+    cpf number(11) constraint uk_unv_cpf unique not null,
+    sexo char(1) constraint ck_unv_sexo CHECK (sexo IN('F','M', 'I'))
+    );
+    
+CREATE TABLE
+    T_UNV_CURSO (
+    id_curso int constraint pk_curso primary key,
+    nm_curso varchar(100) constraint nm_curso not null,
+    constraint uk_curso unique (nm_curso)
+    );
+  
+CREATE TABLE
+    T_UNV_PROFESSOR (
+    id_professor int constraint pk_professor primary key,
+    nm_professor varchar(100) constraint nm_professor not null
+    );
+    
+CREATE TABLE
+    T_UNV_DISCIPLINA (
+    id_disciplina int constraint pk_disciplina primary key,
+    nm_disciplina varchar(100) constraint nm_disciplina not null,
+    ementa varchar(100) not null,
+    ref_bibliografica varchar(100) not null,
+    carga_horaria int,
+    modalidade char(1) constraint ck_unv_modalidade CHECK (modalidade IN('PRESENCIAL','REMOTO'))
+    );
+    
+CREATE TABLE
+    T_UNV_TURMA (
+    id_turma int constraint pk_turma primary key,
+    dt_criacao date constraint nn_dt_criacao not null,
+    nm_turma varchar(100) constraint nn_turma not null,
+    situacao char(1),
+    t_unv_curso_id_curso int CONSTRAINT fk_curso_turma references t_unv_curso(id_curso)
+    );
+    
+drop table T_UNV_ALUNO
+drop table T_UNV_CURSO
+drop table T_UNV_PROFESSOR
+drop table T_UNV_DISCIPLINA
+drop table T_UNV_TURMA
+
+
+aluno, curso, professor, disciplina
+Os campos cpf (ALUNO), nm_curso (CURSO) e nm_turma (TURMA) são chave única
