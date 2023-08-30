@@ -1,0 +1,115 @@
+-- Tabela de Pacientes
+CREATE TABLE T_PACIENTE (
+  id_paciente NUMBER(9) CONSTRAINT pk_paciente PRIMARY KEY,
+  nm_paciente VARCHAR2(80) NOT NULL,
+  nr_cpf NUMBER(12),
+  nr_rg VARCHAR2(15),
+  dt_nascimento DATE NOT NULL,
+  fl_sexo CHAR(1) NOT NULL CONSTRAINT ck_sexo CHECK (fl_sexo IN ('M', 'F')),
+  ds_escolaridade VARCHAR2(40) NOT NULL,
+  ds_estado_civil VARCHAR2(25) NOT NULL,
+  tip_grupo_sanguineo VARCHAR2(6) NOT NULL CONSTRAINT ck_grupo_sanguineo CHECK (tip_grupo_sanguineo IN ('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-')),
+  nr_altura NUMBER(3,2) NOT NULL,
+  nr_peso NUMBER(4,1) NOT NULL
+);
+
+-- Tabela de Contatos de Emergência
+CREATE TABLE T_CONTATO (
+  id_contato NUMBER(9) CONSTRAINT pk_contato PRIMARY KEY,
+  id_paciente NUMBER(9) NOT NULL,
+  ds_email VARCHAR2(80),
+  nr_telefone VARCHAR2(15),
+  fl_ativo CHAR(1) NOT NULL CONSTRAINT ck_ativo CHECK (fl_ativo IN ('A', 'I')),
+  CONSTRAINT fk_contato_paciente FOREIGN KEY (id_paciente) REFERENCES T_PACIENTE(id_paciente)
+);
+
+-- Tabela de Endereços
+CREATE TABLE T_ENDERECO (
+  id_endereco NUMBER(9) CONSTRAINT pk_endereco PRIMARY KEY,
+  id_paciente NUMBER(9) NOT NULL,
+  nm_logradouro VARCHAR2(100) NOT NULL,
+  nr_logradouro NUMBER(10) NOT NULL,
+  ds_bairro VARCHAR2(80) NOT NULL,
+  ds_cidade VARCHAR2(80) NOT NULL,
+  ds_estado VARCHAR2(40) NOT NULL,
+  nr_cep NUMBER(8) NOT NULL,
+  ds_ponto_referencia VARCHAR2(200),
+  CONSTRAINT fk_endereco_paciente FOREIGN KEY (id_paciente) REFERENCES T_PACIENTE(id_paciente)
+);
+
+-- Tabela de Planos de Saúde
+CREATE TABLE T_PLANO_SAUDE (
+  id_plano NUMBER(9) CONSTRAINT pk_plano PRIMARY KEY,
+  ds_nome_fantasia VARCHAR2(100) NOT NULL,
+  ds_razao_social VARCHAR2(100) NOT NULL,
+  nr_cnpj NUMBER(14) NOT NULL,
+  ds_contato VARCHAR2(80),
+  nr_telefone VARCHAR2(15)
+);
+
+-- Tabela de Pacientes e Planos de Saúde
+CREATE TABLE T_PACIENTE_PLANO (
+  id_paciente NUMBER(9) NOT NULL,
+  id_plano NUMBER(9) NOT NULL,
+  dt_validade DATE NOT NULL,
+  CONSTRAINT fk_paciente_plano_paciente FOREIGN KEY (id_paciente) REFERENCES T_PACIENTE(id_paciente),
+  CONSTRAINT fk_paciente_plano_plano FOREIGN KEY (id_plano) REFERENCES T_PLANO_SAUDE(id_plano)
+);
+
+-- Tabela de Funcionários
+CREATE TABLE T_FUNCIONARIO (
+  id_funcionario NUMBER(9) CONSTRAINT pk_funcionario PRIMARY KEY,
+  nm_funcionario VARCHAR2(80) NOT NULL,
+  ds_login VARCHAR2(20) UNIQUE NOT NULL,
+  ds_senha VARCHAR2(20) NOT NULL,
+  fl_ativo CHAR(1) NOT NULL CONSTRAINT ck_ativo_funcionario CHECK (fl_ativo IN ('A', 'I'))
+);
+
+-- Tabela de Acessos de Pacientes
+CREATE TABLE T_PACIENTE_LOGIN (
+  id_paciente NUMBER(9) NOT NULL,
+  ds_login VARCHAR2(20) UNIQUE NOT NULL,
+  ds_senha VARCHAR2(20) NOT NULL,
+  CONSTRAINT fk_paciente_login FOREIGN KEY (id_paciente) REFERENCES T_PACIENTE(id_paciente)
+);
+
+-- Tabela de Pagamentos
+CREATE TABLE T_PAGAMENTO (
+  id_pagamento NUMBER(9) CONSTRAINT pk_pagamento PRIMARY KEY,
+  id_paciente NUMBER(9) NOT NULL,
+  dt_cadastro DATE NOT NULL,
+  dt_pagamento DATE,
+  tp_status CHAR(1) NOT NULL CONSTRAINT ck_status_pagamento CHECK (tp_status IN ('P', 'A')),
+  tp_pagamento VARCHAR2(20) NOT NULL,
+  CONSTRAINT fk_pagamento_paciente FOREIGN KEY (id_paciente) REFERENCES T_PACIENTE(id_paciente)
+);
+
+-- Tabela de Pagamentos de Convênio Médico
+CREATE TABLE T_PAGAMENTO_CONVENIO (
+  id_pagamento NUMBER(9) NOT NULL,
+  nr_carteira VARCHAR2(20) NOT NULL,
+  dt_vencimento DATE NOT NULL,
+  nr_transacao VARCHAR2(20) NOT NULL,
+  dt_transacao DATE NOT NULL,
+  CONSTRAINT fk_pagamento_convenio FOREIGN KEY (id_pagamento) REFERENCES T_PAGAMENTO(id_pagamento)
+);
+
+-- Tabela de Pagamentos de Cartão
+CREATE TABLE T_PAGAMENTO_CARTAO (
+  id_pagamento NUMBER(9) NOT NULL,
+  nr_cartao VARCHAR2(20) NOT NULL,
+  nr_transacao VARCHAR2(20) NOT NULL,
+  dt_transacao DATE NOT NULL,
+  dt_vencimento DATE NOT NULL,
+  bandeira VARCHAR2(20) NOT NULL,
+  CONSTRAINT fk_pagamento_cartao FOREIGN KEY (id_pagamento) REFERENCES T_PAGAMENTO(id_pagamento)
+);
+
+-- Tabela de Pagamentos PIX
+CREATE TABLE T_PAGAMENTO_PIX (
+  id_pagamento NUMBER(9) NOT NULL,
+  nr_transacao VARCHAR2(20) NOT NULL,
+  dt_transacao DATE NOT NULL,
+  tipo_chave VARCHAR2(20) NOT NULL,
+  CONSTRAINT fk_pagamento_pix FOREIGN KEY (id_pagamento) REFERENCES T_PAGAMENTO(id_pagamento)
+);
